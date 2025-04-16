@@ -9,4 +9,6 @@ public interface ProdottoDao {
     Optional<Prodotto> trovaPerId(Long id);
     List<Prodotto> trovaTutti();
     List<Prodotto> trovaPerIdCategoria(Long idCategoria);
+    Prodotto modifica(Prodotto prodotto);
+    void elimina(Long id); 
 }

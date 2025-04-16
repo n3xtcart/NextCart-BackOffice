@@ -2,6 +2,7 @@ package org.example.dao.impl;
 
 import org.example.dao.ProdottoDao;
 import org.example.exception.EccezioneAccessoDati;
+import org.example.entity.Categoria;
 import org.example.entity.Prodotto;
 
 import java.util.ArrayList;
@@ -94,4 +95,29 @@ public class InMemoryProdottoDao implements ProdottoDao {
                 .filter(p -> idCategoria.equals(p.getIdCategoria()))
                 .collect(Collectors.toList()); // Raccoglie in una nuova lista
     }
+
+    @Override
+    public void elimina(Long id) {
+        Optional<Prodotto> prodotto = trovaPerId(id);
+        if (prodotto.isPresent()) {
+        	archivioProdotti.remove(prodotto.get());
+        } else {
+            throw new IllegalArgumentException("Categoria non trovata per ID: " + id);
+        }
+    }
+
+	@Override
+	public Prodotto modifica(Prodotto prodotto) {
+		Optional<Prodotto> prodottoEsistente = trovaPerId(prodotto.getId());
+        if (prodottoEsistente.isEmpty()) {
+            throw new IllegalArgumentException("Prodotto non trovato per ID: " + prodotto.getId());
+        }
+        Prodotto esistente = prodottoEsistente.get();
+        esistente.setNome(prodotto.getNome());
+        esistente.setDescrizione(prodotto.getDescrizione());
+        esistente.setQuantita(prodotto.getQuantita());
+        esistente.setPercorsoImmagine(prodotto.getPercorsoImmagine());
+        esistente.setIdCategoria(prodotto.getIdCategoria());
+        return esistente;
+	}
 }

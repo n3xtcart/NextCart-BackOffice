@@ -7,16 +7,16 @@ public class ProdottoDTO {
     private int quantita;
     private String percorsoImmagine;
     private Long idCategoria;
-    private String nomeCategoria; // Denormalizzato
+    private CategoriaDTO categoriaDTO; 
 
-    public ProdottoDTO(Long id, String nome, String descrizione, int quantita, String percorsoImmagine, Long idCategoria, String nomeCategoria) {
+    public ProdottoDTO(Long id, String nome, String descrizione, int quantita, String percorsoImmagine, Long idCategoria, CategoriaDTO categoriaDTO) {
         this.id = id;
         this.nome = nome;
         this.descrizione = descrizione;
         this.quantita = quantita;
         this.percorsoImmagine = percorsoImmagine;
         this.idCategoria = idCategoria;
-        this.nomeCategoria = nomeCategoria;
+        this.categoriaDTO = categoriaDTO;
     }
     public Long getId() { return id; }
     public String getNome() { return nome; }
@@ -24,5 +24,6 @@ public class ProdottoDTO {
     public int getQuantita() { return quantita; }
     public String getPercorsoImmagine() { return percorsoImmagine; }
     public Long getIdCategoria() { return idCategoria; }
-    public String getNomeCategoria() { return nomeCategoria; }
+    public CategoriaDTO getCategoriaDTO() { return categoriaDTO; }
+
 }

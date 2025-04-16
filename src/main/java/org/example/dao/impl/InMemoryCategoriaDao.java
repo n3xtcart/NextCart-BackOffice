@@ -1,12 +1,12 @@
 package org.example.dao.impl;
 
-import org.example.dao.CategoriaDao;
-import org.example.exception.EccezioneAccessoDati;
-import org.example.entity.Categoria;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import org.example.dao.CategoriaDao;
+import org.example.entity.Categoria;
+import org.example.exception.EccezioneAccessoDati;
 
 /**
  * Implementazione di CategoriaDao che utilizza un archivio in memoria per gestire le categorie.
@@ -162,4 +162,27 @@ public class InMemoryCategoriaDao implements CategoriaDao {
         // Restituire una copia è una buona pratica anche in single-thread
         return new ArrayList<>(archivioCategorie);
     }
+
+    @Override
+    public void elimina(Long id) {
+        Optional<Categoria> categoria = trovaPerId(id);
+        if (categoria.isPresent()) {
+            archivioCategorie.remove(categoria.get());
+        } else {
+            throw new IllegalArgumentException("Categoria non trovata per ID: " + id);
+        }
+    }
+
+	@Override
+	public Categoria modifica(Categoria categoria) {
+        Optional<Categoria> categoriaEsistente = trovaPerId(categoria.getId());
+        if (categoriaEsistente.isEmpty()) {
+            throw new IllegalArgumentException("Categoria non trovata per ID: " + categoria.getId());
+        }
+        Categoria esistente = categoriaEsistente.get();
+        esistente.setNome(categoria.getNome());
+        esistente.setPercorsoImmagine(categoria.getPercorsoImmagine());
+        return esistente;
+	}
+
 }

@@ -9,4 +9,6 @@ public interface CategoriaDao {
     Optional<Categoria> trovaPerId(Long id);
     Optional<Categoria> trovaPerNome(String nome);
     List<Categoria> trovaTutte();
+    Categoria modifica(Categoria categoria);
+    void elimina(Long id);  
 }
