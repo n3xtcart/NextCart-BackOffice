@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Home </title>
+
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous">
+
+    <link rel="stylesheet" href="/resources/CSS/style.css">
+
+    <script src="/resources/JS/prodotti.js"></script>
+
+</head>
+<body>
+
+    <div class="d-flex">
+        <!-- Sidebar -->
+        <div class="sidebar p-3 border-end">
+          <h5>Menu</h5>
+          <ul class="nav flex-column">
+            <li class="nav-item">
+              <a class="nav-link active" href="home.html" style="white-space: nowrap;">Categorie</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="prodotti.html">Prodotti</a>
+            </li>
+          </ul>
+        </div>
+      
+        <!-- Main content -->
+        <div class="flex-grow-1 d-flex flex-column">
+          <!-- Header -->
+          <header class="d-flex justify-content-between align-items-center p-3 border-bottom">
+            <div class="d-flex align-items-center gap-3">
+              <button class="btn btn-outline-secondary d-md-none">☰</button>
+              <img src="/resources/img/NEXTR3CART.png" alt="Logo" style="width: 50px;">
+              <h4 class="mb-0">Home</h4>
+            </div>
+            <div class="d-flex align-items-center gap-3">
+                <a href="/resources/HTML/profiloAdmin.html"><i class="fa-solid fa-user fa-2x" id="avatar"></i></a>
+            </div>
+          </header>
+  
+          <!-- Content -->
+          <main class="p-4">
+            <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+                <h3 class="mb-0">Prodotti</h3>
+                
+                <div class="d-flex flex-column align-items-start gap-2">
+                  <!-- Filtro per "Filtra per:" -->
+                  <div class="d-flex align-items-center gap-2">
+                    <label for="filtro" class="form-label mb-0">Filtra per:</label>
+                    <select id="filtro" class="form-select" style="width: 180px;" onchange="toggleQuantityInput()">
+                      <option value="">Tutti</option>
+                      <option value="categoria">Categoria</option>
+                      <option value="quantita">Quantità</option>
+                      <option value="nome">Nome</option>
+                    </select>
+                  </div>
+
+                  <!-- Campo selezione categoria -->
+                  <div class="d-flex align-items-center gap-2 ms-auto" id="categoriaInput" style="display: none;">
+                    <select id="categoriaSelect" class="form-select" style="width: 180px;">
+                      <option value="">Tutte le categorie</option>
+                      <option value="Carne">Carne</option>
+                      <option value="Igiene">Igiene</option>
+                      <option value="Pesce">Pesce</option>
+                      <option value="UovaLatticini">Uova & Latticini</option>
+                      <option value="FruttaVerdure">Frutta & Verdure</option>
+                    </select>
+                  </div>
+
+                  
+                  <!-- Campo di ricerca per "Nome" -->
+                  <div class="d-flex align-items-center gap-2 ms-auto" id="nomeInput" style="display: none;">
+                    <input type="text" id="nomeProdotto" class="form-control" placeholder="Cerca per nome" aria-label="Cerca per nome" style="width: 180px;">
+                  </div>
+              
+                  <!-- Campo di ricerca per "Quantità" -->
+                  <div class="d-flex align-items-center gap-2 ms-auto" id="quantitaInput" style="display: none;">
+                    <input type="number" id="quantita" class="form-control" placeholder="Inserisci quantità" aria-label="Quantità" style="width: 120px;">
+                    
+                    <!-- Selettore per unità di misura -->
+                    <div class="d-flex gap-2">
+                      <label class="form-check-label" for="kg">kg</label>
+                      <input type="radio" id="kg" name="unita" value="kg" checked>
+                      
+                      <label class="form-check-label" for="unita">Unità</label>
+                      <input type="radio" id="unita" name="unita" value="unita">
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              
+              
+            <div class="row g-4">
+              <!-- Card -->
+
+            </div>
+            <!-- Popup di modifica prodotto -->
+            <div id="editProductPopup" class="popup" style="display: none;">
+              <div class="popup-content">
+                <h4>Modifica Prodotto</h4>
+                <label for="productName">Nome Prodotto:</label>
+                <input type="text" id="productName"></br>
+                <label for="productQuantity">Quantità:</label></br> 
+                <input type="number" id="productQuantity">
+                <label for="categoryImage">Immagine Categoria:</label>
+                <input type="file" id="categoryImage" accept="image/*">
+                <div id="buttons">
+                  <button id="saveEditProduct" class="btn btn-primary">Salva</button>
+                  <button id="closeEditProduct" class="btn btn-secondary">Chiudi</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Popup di conferma eliminazione prodotto -->
+            <div id="deleteProductPopup" class="popup" style="display: none;">
+              <div class="popup-content">
+                <h4>Sei sicuro di voler eliminare questo prodotto?</h4>
+                <button id="confirmDeleteProduct" class="btn btn-danger">Elimina</button>
+                <button id="closeDeleteProduct" class="btn btn-secondary">Annulla</button>
+              </div>
+            </div>
+
+          </main>
+        </div>
+        </div>
+
+</body>
+</html>
