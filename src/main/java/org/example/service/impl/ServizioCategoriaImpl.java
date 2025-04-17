@@ -5,6 +5,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.example.dao.CategoriaDao;
+import org.example.dao.ProdottoDao;
 import org.example.dto.CategoriaDTO;
 import org.example.entity.Categoria;
 import org.example.service.ServizioCategoria;
@@ -13,6 +14,12 @@ import org.example.service.ServizioCategoria;
 public class ServizioCategoriaImpl implements ServizioCategoria{
 	
 	CategoriaDao categoriaDao;
+
+	
+	public ServizioCategoriaImpl(CategoriaDao categoriaDao) {
+		this.categoriaDao = categoriaDao;
+
+	}
 
 	@Override
 	public CategoriaDTO salva(CategoriaDTO categoriaDTO) {
