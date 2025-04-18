@@ -5,11 +5,16 @@ document.addEventListener('DOMContentLoaded', function () {
   const searchInput = document.getElementById('searchInput');
   searchInput.addEventListener('input', function () {
     const searchTerm = searchInput.value.trim();
-    if (searchTerm === '') {
-      createCards(); // Mostra tutte le card
-    } else {
-      filterCategoriesByName(searchTerm);
-    }
+    const quantityTerm = document.getElementById('quantityInput').value.trim();
+    filterCategories(searchTerm, quantityTerm);
+  });
+
+  // Filtro per quantità
+  const quantityInput = document.getElementById('quantityInput');
+  quantityInput.addEventListener('input', function () {
+    const searchTerm = searchInput.value.trim();
+    const quantityTerm = quantityInput.value.trim();
+    filterCategories(searchTerm, quantityTerm);
   });
 
   addEventListeners();
@@ -20,37 +25,37 @@ let categories = [
   {
     id: 1,
     name: "Carne",
-    productCount: 12,
+    productCount: 5,
     image: "carne.png"
   },
   {
     id: 2,
     name: "Frutta & Verdure",
-    productCount: 20,
+    productCount: 5,
     image: "fruttaverdure.jpg"
   },
   {
     id: 3,
     name: "Pesce",
-    productCount: 8,
+    productCount: 5,
     image: "pesce.jpg"
   },
   {
     id: 4,
     name: "Igiene",
-    productCount: 15,
+    productCount: 5,
     image: "igiene.jpg"
   },
   {
     id: 5,
     name: "Salumi & Formaggi",
-    productCount: 10,
+    productCount: 5,
     image: "salumiformaggi.jpg"
   },
   {
     id: 6,
     name: "Uova & Latticini",
-    productCount: 25,
+    productCount: 5,
     image: "uovalatticini.jpeg"
   }
 ];
@@ -60,11 +65,13 @@ function createCards() {
   renderFilteredCategoryCards(categories);
 }
 
-// Filtra le categorie per nome
-function filterCategoriesByName(searchTerm) {
-  const filteredCategories = categories.filter(category =>
-    category.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+// Filtra le categorie per nome e quantità
+function filterCategories(searchTerm, quantityTerm) {
+  const filteredCategories = categories.filter(category => {
+    const matchesName = category.name.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesQuantity = quantityTerm === '' || category.productCount == quantityTerm;
+    return matchesName && matchesQuantity;
+  });
   renderFilteredCategoryCards(filteredCategories);
 }
 
@@ -164,5 +171,3 @@ function addEventListeners() {
     createCards(); // Ricarica le card
   };
 }
-
-

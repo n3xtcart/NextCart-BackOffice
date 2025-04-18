@@ -50,17 +50,14 @@
               <h3 class="mb-0">Categorie</h3>
               
               <div class="d-flex flex-column align-items-start gap-2">
-                <div class="d-flex align-items-center gap-2">
-                  <label for="filtro" class="form-label mb-0">Filtra per:</label>
-                  <select id="filtro" class="form-select" style="width: 180px;">
-                    <option value="">Tutti</option>
-                    <option value="nome">Nome</option>
-                  </select>
-                </div>
-                
-                <!-- Campo di ricerca per nome -->
+                <!-- Filtro per nome -->
                 <div class="d-flex align-items-center gap-2 ms-auto">
-                  <input type="text" id="searchInput" class="form-control" placeholder="Cerca per nome" aria-label="Cerca per nome" style="width: 180px;">
+                  <input type="text" id="searchInput" class="form-control" placeholder="Filtra per nome" aria-label="Filtra per nome" style="width: 100%;">
+                </div>
+
+                <!-- Filtro per quantità -->
+                <div class="d-flex align-items-center gap-2 ms-auto">
+                  <input type="number" id="quantityInput" class="form-control" placeholder="Filtra per quantità" aria-label="Filtra per quantità" style="width: 100%;">
                 </div>
               </div>
             </div>

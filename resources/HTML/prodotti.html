@@ -46,56 +46,31 @@
   
           <!-- Content -->
           <main class="p-4">
-            <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
-                <h3 class="mb-0">Prodotti</h3>
-                
-                <div class="d-flex flex-column align-items-start gap-2">
-                  <!-- Filtro per "Filtra per:" -->
-                  <div class="d-flex align-items-center gap-2">
-                    <label for="filtro" class="form-label mb-0">Filtra per:</label>
-                    <select id="filtro" class="form-select" style="width: 180px;" onchange="toggleQuantityInput()">
-                      <option value="">Tutti</option>
-                      <option value="categoria">Categoria</option>
-                      <option value="quantita">Quantità</option>
-                      <option value="nome">Nome</option>
-                    </select>
-                  </div>
-
-                  <!-- Campo selezione categoria -->
-                  <div class="d-flex align-items-center gap-2 ms-auto" id="categoriaInput" style="display: none;">
-                    <select id="categoriaSelect" class="form-select" style="width: 180px;">
-                      <option value="">Tutte le categorie</option>
-                      <option value="Carne">Carne</option>
-                      <option value="Igiene">Igiene</option>
-                      <option value="Pesce">Pesce</option>
-                      <option value="UovaLatticini">Uova & Latticini</option>
-                      <option value="FruttaVerdure">Frutta & Verdure</option>
-                    </select>
-                  </div>
-
-                  
-                  <!-- Campo di ricerca per "Nome" -->
-                  <div class="d-flex align-items-center gap-2 ms-auto" id="nomeInput" style="display: none;">
-                    <input type="text" id="nomeProdotto" class="form-control" placeholder="Cerca per nome" aria-label="Cerca per nome" style="width: 180px;">
-                  </div>
-              
-                  <!-- Campo di ricerca per "Quantità" -->
-                  <div class="d-flex align-items-center gap-2 ms-auto" id="quantitaInput" style="display: none;">
-                    <input type="number" id="quantita" class="form-control" placeholder="Inserisci quantità" aria-label="Quantità" style="width: 120px;">
-                    
-                    <!-- Selettore per unità di misura -->
-                    <div class="d-flex gap-2">
-                      <label class="form-check-label" for="kg">kg</label>
-                      <input type="radio" id="kg" name="unita" value="kg" checked>
-                      
-                      <label class="form-check-label" for="unita">Unità</label>
-                      <input type="radio" id="unita" name="unita" value="unita">
-                    </div>
-                  </div>
-                </div>
+            <div class="d-flex flex-column align-items-start gap-3 mb-4 ms-auto" style="max-width: 200px;">
+    
+              <!-- Filtro per nome -->
+              <div class="d-flex flex-column align-items-start gap-2" style="width: 100%;">
+                <input type="text" id="nomeProdotto" placeholder="Filtra per nome" class="form-control" />
               </div>
-              
-              
+          
+              <!-- Filtro per quantità -->
+              <div class="d-flex flex-column align-items-start gap-2" style="width: 100%;">
+                <input type="number" id="quantita" placeholder="Filtra per quantità" class="form-control" />
+              </div>
+          
+              <!-- Filtro per categoria -->
+              <div class="d-flex flex-column align-items-start gap-2" style="width: 100%;">
+                <select id="categoriaSelect" class="form-select">
+                  <option value="">Filtra per categoria</option>
+                  <option value="Carne">Carne</option>
+                  <option value="Igiene">Igiene</option>
+                  <option value="Pesce">Pesce</option>
+                  <option value="UovaLatticini">Uova & Latticini</option>
+                  <option value="FruttaVerdure">Frutta & Verdure</option>
+                </select>
+              </div>
+          
+            </div>
               
             <div class="row g-4">
               <!-- Card -->
