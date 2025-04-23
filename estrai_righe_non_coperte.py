@@ -12,7 +12,7 @@ with open(output_path, 'w') as out:
         for sourcefile in package.findall('sourcefile'):
             filename = sourcefile.get('name')
             for line in sourcefile.findall('line'):
-                if line.get('mi') != '0':  # mi = missed instructions
+                if line.get('mi') != '0':
                     line_number = line.get('nr')
                     out.write(f"src/main/java/{package_name}/{filename}:{line_number}\n")
 
