@@ -6,196 +6,140 @@ import java.util.stream.Collectors;
 
 import org.example.dao.CategoriaDao;
 import org.example.dao.ProdottoDao;
+// Assuming you will use JDBC DAOs, you might inject them directly
+// or keep injecting interfaces and wire them up elsewhere.
+// For this example, I'll assume the interfaces are injected.
+// import org.example.dao.impl.JdbcCategoriaDao;
+// import org.example.dao.impl.JdbcProdottoDao;
 import org.example.dto.CategoriaDTO;
 import org.example.dto.ProdottoDTO;
 import org.example.entity.Categoria;
 import org.example.entity.Prodotto;
+import org.example.exception.EccezioneRisorsaNonTrovata; // Assuming you want to use this
 import org.example.service.ServizioProdotto;
 
-/**
- * Implementazione dell'interfaccia ServizioProdotto.
- * Fornisce metodi per la gestione dei prodotti, inclusi salvataggio, ricerca, modifica ed eliminazione.
- */
 public class ServizioProdottoImpl implements ServizioProdotto {
 
-	private CategoriaDao categoriaDao;
-	private ProdottoDao prodottoDao;
+	private final CategoriaDao categoriaDao;
+	private final ProdottoDao prodottoDao;
 
 	/**
 	 * Costruttore per ServizioProdottoImpl.
 	 *
 	 * @param categoriaDao il DAO utilizzato per l'accesso ai dati delle categorie.
-	 * @param prodottoDao il DAO utilizzato per l'accesso ai dati dei prodotti.
+	 * @param prodottoDao  il DAO utilizzato per l'accesso ai dati dei prodotti.
 	 */
 	public ServizioProdottoImpl(CategoriaDao categoriaDao, ProdottoDao prodottoDao) {
 		this.categoriaDao = categoriaDao;
 		this.prodottoDao = prodottoDao;
 	}
 
-	/**
-	 * Salva un nuovo prodotto.
-	 *
-	 * @param prodottoDTO il DTO contenente i dati del prodotto da salvare.
-	 * @return il DTO del prodotto salvato.
-	 */
+	private ProdottoDTO convertiAProdottoDTO(Prodotto prodotto) {
+		if (prodotto == null) return null;
+		CategoriaDTO categoriaDTO = null;
+		if (prodotto.getCategoria() != null) {
+			categoriaDTO = new CategoriaDTO(
+					prodotto.getCategoria().getId(),
+					prodotto.getCategoria().getNome(),
+					prodotto.getCategoria().getPercorsoImmagine()
+			);
+		}
+		return new ProdottoDTO(
+				prodotto.getId(),
+				prodotto.getNome(),
+				prodotto.getDescrizione(),
+				prodotto.getQuantita(),
+				prodotto.getPercorsoImmagine(),
+				categoriaDTO,
+				prodotto.getTipologia() // NUOVO CAMPO
+		);
+	}
+
+	private Prodotto convertiAProdottoEntity(ProdottoDTO prodottoDTO, Categoria categoria) {
+		if (prodottoDTO == null) return null;
+		Prodotto prodotto = new Prodotto();
+		prodotto.setId(prodottoDTO.getId()); // Might be null for new products
+		prodotto.setNome(prodottoDTO.getNome());
+		prodotto.setDescrizione(prodottoDTO.getDescrizione());
+		prodotto.setQuantita(prodottoDTO.getQuantita());
+		prodotto.setPercorsoImmagine(prodottoDTO.getPercorsoImmagine());
+		prodotto.setCategoria(categoria); // Categoria entity passed separately
+		prodotto.setTipologia(prodottoDTO.getTipologia()); // NUOVO CAMPO
+		return prodotto;
+	}
+
+
 	@Override
 	public ProdottoDTO salva(ProdottoDTO prodottoDTO) {
+		if (prodottoDTO == null) throw new IllegalArgumentException("ProdottoDTO non può essere nullo.");
+		if (prodottoDTO.getCategoriaDTO() == null || prodottoDTO.getCategoriaDTO().getId() == null) {
+			throw new IllegalArgumentException("CategoriaDTO o ID della categoria nel ProdottoDTO non possono essere nulli.");
+		}
+
 		Categoria categoria = categoriaDao.trovaPerId(prodottoDTO.getCategoriaDTO().getId())
 				.orElseThrow(() -> new IllegalArgumentException("Categoria non trovata per ID: " + prodottoDTO.getCategoriaDTO().getId()));
 
-		Prodotto prodotto = new Prodotto();
-		prodotto.setNome(prodottoDTO.getNome());
-		prodotto.setDescrizione(prodottoDTO.getDescrizione());
-		prodotto.setQuantita(prodottoDTO.getQuantita());
-		prodotto.setPercorsoImmagine(prodottoDTO.getPercorsoImmagine());
-		prodotto.setCategoria(categoria);
+		Prodotto prodottoDaSalvare = convertiAProdottoEntity(prodottoDTO, categoria);
+		// ID will be null for new product, so DAO will assign it.
+		// For updates, ID will be present.
 
-		Prodotto prodottoSalvato = prodottoDao.salva(prodotto);
-
-		return new ProdottoDTO(
-				prodottoSalvato.getId(),
-				prodottoSalvato.getNome(),
-				prodottoSalvato.getDescrizione(),
-				prodottoSalvato.getQuantita(),
-				prodottoSalvato.getPercorsoImmagine(),
-				prodottoDTO.getCategoriaDTO()
-		);
+		Prodotto prodottoSalvato = prodottoDao.salva(prodottoDaSalvare);
+		return convertiAProdottoDTO(prodottoSalvato);
 	}
 
-	/**
-	 * Trova un prodotto per ID.
-	 *
-	 * @param id l'ID del prodotto da trovare.
-	 * @return un Optional contenente il DTO del prodotto se trovato, altrimenti vuoto.
-	 */
 	@Override
 	public Optional<ProdottoDTO> trovaPerId(Long id) {
-		Optional<Prodotto> prodotto = prodottoDao.trovaPerId(id);
-		if (prodotto.isPresent()) {
-			Prodotto p = prodotto.get();
-			Categoria categoria = p.getCategoria();
-
-			CategoriaDTO categoriaDTO = new CategoriaDTO(
-					categoria.getId(),
-					categoria.getNome(),
-					categoria.getPercorsoImmagine()
-			);
-
-			return Optional.of(new ProdottoDTO(
-					p.getId(),
-					p.getNome(),
-					p.getDescrizione(),
-					p.getQuantita(),
-					p.getPercorsoImmagine(),
-					categoriaDTO
-			));
-		}
-		return Optional.empty();
+		return prodottoDao.trovaPerId(id).map(this::convertiAProdottoDTO);
 	}
 
-	/**
-	 * Recupera tutti i prodotti.
-	 *
-	 * @return una lista di DTO di tutti i prodotti presenti.
-	 */
 	@Override
 	public List<ProdottoDTO> trovaTutti() {
-		List<Prodotto> prodotti = prodottoDao.trovaTutti();
-		return prodotti.stream().map(p -> {
-			Categoria categoria = p.getCategoria();
-			CategoriaDTO categoriaDTO = new CategoriaDTO(
-					categoria.getId(),
-					categoria.getNome(),
-					categoria.getPercorsoImmagine()
-			);
-
-			return new ProdottoDTO(
-					p.getId(),
-					p.getNome(),
-					p.getDescrizione(),
-					p.getQuantita(),
-					p.getPercorsoImmagine(),
-					categoriaDTO
-			);
-		}).collect(Collectors.toList());
+		return prodottoDao.trovaTutti().stream()
+				.map(this::convertiAProdottoDTO)
+				.collect(Collectors.toList());
 	}
 
-	/**
-	 * Trova i prodotti per ID della categoria.
-	 *
-	 * @param idCategoria l'ID della categoria per cui trovare i prodotti.
-	 * @return una lista di DTO dei prodotti appartenenti alla categoria specificata.
-	 */
 	@Override
 	public List<ProdottoDTO> trovaPerIdCategoria(Long idCategoria) {
-		List<Prodotto> prodotti = prodottoDao.trovaPerIdCategoria(idCategoria);
-		return prodotti.stream().map(p -> {
-			Categoria categoria = p.getCategoria();
-			CategoriaDTO categoriaDTO = new CategoriaDTO(
-					categoria.getId(),
-					categoria.getNome(),
-					categoria.getPercorsoImmagine()
-			);
-
-			return new ProdottoDTO(
-					p.getId(),
-					p.getNome(),
-					p.getDescrizione(),
-					p.getQuantita(),
-					p.getPercorsoImmagine(),
-					categoriaDTO
-			);
-		}).collect(Collectors.toList());
+		if (idCategoria == null) return List.of();
+		return prodottoDao.trovaPerIdCategoria(idCategoria).stream()
+				.map(this::convertiAProdottoDTO)
+				.collect(Collectors.toList());
 	}
 
-	/**
-	 * Modifica un prodotto esistente.
-	 *
-	 * @param prodottoDTO il DTO contenente i dati aggiornati del prodotto.
-	 * @return il DTO del prodotto modificato.
-	 */
 	@Override
 	public ProdottoDTO modifica(ProdottoDTO prodottoDTO) {
-		Optional<Prodotto> prodottoEsistente = prodottoDao.trovaPerId(prodottoDTO.getId());
-		if (prodottoEsistente.isEmpty()) {
-			throw new IllegalArgumentException("Prodotto non trovato per ID: " + prodottoDTO.getId());
+		if (prodottoDTO == null || prodottoDTO.getId() == null) {
+			throw new IllegalArgumentException("ProdottoDTO o ID del prodotto non possono essere nulli per la modifica.");
 		}
+		if (prodottoDTO.getCategoriaDTO() == null || prodottoDTO.getCategoriaDTO().getId() == null) {
+			throw new IllegalArgumentException("CategoriaDTO o ID della categoria nel ProdottoDTO non possono essere nulli per la modifica.");
+		}
+
+		// Check if product exists
+		prodottoDao.trovaPerId(prodottoDTO.getId())
+				.orElseThrow(() -> new IllegalArgumentException("Prodotto non trovato per ID: " + prodottoDTO.getId() + " per la modifica."));
+
 
 		Categoria categoria = categoriaDao.trovaPerId(prodottoDTO.getCategoriaDTO().getId())
 				.orElseThrow(() -> new IllegalArgumentException("Categoria non trovata per ID: " + prodottoDTO.getCategoriaDTO().getId()));
 
-		Prodotto prodotto = prodottoEsistente.get();
-		prodotto.setNome(prodottoDTO.getNome());
-		prodotto.setDescrizione(prodottoDTO.getDescrizione());
-		prodotto.setQuantita(prodottoDTO.getQuantita());
-		prodotto.setPercorsoImmagine(prodottoDTO.getPercorsoImmagine());
-		prodotto.setCategoria(categoria);
+		Prodotto prodottoDaModificare = convertiAProdottoEntity(prodottoDTO, categoria);
 
-		Prodotto prodottoModificato = prodottoDao.salva(prodotto);
+		// The DAO's 'modifica' or 'salva' (with ID) will handle the update.
+		Prodotto prodottoModificato = prodottoDao.modifica(prodottoDaModificare);
+		// Or: Prodotto prodottoModificato = prodottoDao.salva(prodottoDaModificare);
+		// Depending on how you want to structure DAO methods. JdbcProdottoDao.modifica calls salva.
 
-		return new ProdottoDTO(
-				prodottoModificato.getId(),
-				prodottoModificato.getNome(),
-				prodottoModificato.getDescrizione(),
-				prodottoModificato.getQuantita(),
-				prodottoModificato.getPercorsoImmagine(),
-				prodottoDTO.getCategoriaDTO()
-		);
+		return convertiAProdottoDTO(prodottoModificato);
 	}
 
-	/**
-	 * Elimina un prodotto dato il suo ID.
-	 *
-	 * @param id l'ID del prodotto da eliminare.
-	 * @throws IllegalArgumentException se il prodotto non viene trovato.
-	 */
 	@Override
 	public void elimina(Long id) {
-		Optional<Prodotto> prodotto = prodottoDao.trovaPerId(id);
-		if (prodotto.isPresent()) {
-			prodottoDao.elimina(id);
-		} else {
-			throw new IllegalArgumentException("Prodotto non trovato per ID: " + id);
-		}
+		if (id == null) throw new IllegalArgumentException("ID prodotto non può essere nullo.");
+		// Check if product exists before attempting deletion to provide a clear message
+		prodottoDao.trovaPerId(id)
+				.orElseThrow(() -> new IllegalArgumentException("Prodotto non trovato per ID: " + id + " per l'eliminazione."));
+		prodottoDao.elimina(id);
 	}
 }
