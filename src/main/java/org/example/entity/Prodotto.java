@@ -1,11 +1,9 @@
 package org.example.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.*;
+
 import java.math.BigDecimal;
 
 @Entity
@@ -15,7 +13,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = {"id", "nome"})
-@ToString(exclude = {"categoria", "tipologia", "unitaMisura"})
+@ToString(exclude = "categoria")
 public class Prodotto {
 
     @Id
@@ -46,15 +44,7 @@ public class Prodotto {
             foreignKey = @ForeignKey(name = "fk_prodotto_categoria"))
     private Categoria categoria;
 
-    @NotNull(message = "La tipologia è obbligatoria")
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "tipologia_id", nullable = false,
-            foreignKey = @ForeignKey(name = "fk_prodotto_tipologia"))
-    private Tipologia tipologia;
-
-    @NotNull(message = "L'unità di misura è obbligatoria")
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "unita_misura_id", nullable = false,
-            foreignKey = @ForeignKey(name = "fk_prodotto_unita"))
-    private UnitaMisura unitaMisura;
+    @NotBlank(message = "L'unità di misura non può essere vuota")
+    @Column(name = "tipologia", nullable = false, columnDefinition = "ENUM('kg','g','ml','l','pz','confezione')")
+    private String tipologia;
 }

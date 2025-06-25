@@ -14,4 +14,6 @@ public interface ServizioAutenticazione {
      */
     UtenteDTO login(RichiestaLoginDTO richiestaLogin) throws EccezioneAutenticazione;
 
+    void inizializzaUtenteAdminSeAssente(String email, String password, String ruolo);
+
 }

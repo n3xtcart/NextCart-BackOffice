@@ -5,15 +5,6 @@
                              https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-
-    <parent>
-        <groupId>io.quarkus.platform</groupId>
-        <artifactId>quarkus-bom</artifactId>
-        <version>3.23.0</version>
-        <relativePath/>
-    </parent>
-
-
     <groupId>org.example</groupId>
     <artifactId>nextcart-backoffice-quarkus</artifactId>
     <version>1.0-SNAPSHOT</version>
@@ -21,66 +12,68 @@
     <packaging>jar</packaging>
 
     <properties>
-
         <maven.compiler.release>21</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-
-
         <compiler-plugin.version>3.14.0</compiler-plugin.version>
         <surefire-plugin.version>3.5.2</surefire-plugin.version>
         <lombok.version>1.18.34</lombok.version>
-
-
         <skipITs>true</skipITs>
+        <!-- Definiamo la versione di Quarkus qui per coerenza -->
+        <quarkus.platform.version>3.23.0</quarkus.platform.version>
     </properties>
 
-    <dependencies>
+    <!--
+        ### CORREZIONE 1: Sostituito <parent> con <dependencyManagement> ###
+        Questo è il modo standard e corretto per importare il BOM di Quarkus.
+        Gestisce le versioni di tutte le dipendenze Quarkus.
+    -->
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>io.quarkus.platform</groupId>
+                <artifactId>quarkus-bom</artifactId>
+                <version>${quarkus.platform.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
+    <dependencies>
+        <!-- Dipendenze di Produzione -->
         <dependency>
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-arc</artifactId>
         </dependency>
-
-
         <dependency>
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-rest-jackson</artifactId>
-
         </dependency>
-
         <dependency>
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-hibernate-orm-panache</artifactId>
         </dependency>
-
         <dependency>
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-jdbc-mysql</artifactId>
         </dependency>
-
         <dependency>
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-hibernate-validator</artifactId>
         </dependency>
-
-
         <dependency>
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-smallrye-jwt</artifactId>
         </dependency>
-
         <dependency>
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-elytron-security</artifactId>
-
         </dependency>
-
         <dependency>
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-vertx-http</artifactId>
         </dependency>
-
         <dependency>
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-smallrye-openapi</artifactId>
@@ -89,14 +82,19 @@
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-swagger-ui</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>${lombok.version}</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>it.nextre.nextcart</groupId>
+            <artifactId>NextCartInterface</artifactId>
+            <version>1.0</version>
+        </dependency>
 
+        <!-- Dipendenze di Test -->
         <dependency>
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-junit5</artifactId>
@@ -112,6 +110,32 @@
             <artifactId>quarkus-test-security</artifactId>
             <scope>test</scope>
         </dependency>
+
+        <!--
+            ### CORREZIONE 2: Dipendenza per i Mock corretta ###
+            La versione è stata rimossa per essere gestita dal BOM.
+        -->
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-junit5-mockito</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!--
+            ### CORREZIONE 3: MANTENUTA dipendenza H2 per i test ###
+            Questa è una buona pratica per avere test veloci e isolati.
+        -->
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-jdbc-h2</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!--
+            ### CORREZIONE 4: RIMOSSE dipendenze non necessarie/dannose ###
+            - quarkus-test-component (è interna)
+            - java-jwt (è ridondante)
+        -->
     </dependencies>
 
     <build>
@@ -119,7 +143,8 @@
             <plugin>
                 <groupId>io.quarkus.platform</groupId>
                 <artifactId>quarkus-maven-plugin</artifactId>
-                <version>3.23.0</version>
+                <!-- Usiamo la property per la versione -->
+                <version>${quarkus.platform.version}</version>
                 <extensions>true</extensions>
                 <executions>
                     <execution>
@@ -131,7 +156,7 @@
                     </execution>
                 </executions>
             </plugin>
-
+            <!-- ... resto della sezione build ... -->
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>${compiler-plugin.version}</version>
@@ -147,7 +172,6 @@
                     </annotationProcessorPaths>
                 </configuration>
             </plugin>
-
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${surefire-plugin.version}</version>
@@ -157,28 +181,10 @@
                     </systemPropertyVariables>
                 </configuration>
             </plugin>
-
-            <plugin>
-                <artifactId>maven-failsafe-plugin</artifactId>
-                <version>${surefire-plugin.version}</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>integration-test</goal>
-                            <goal>verify</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <skip>${skipITs}</skip>
-                    <systemPropertyVariables>
-                        <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
-                    </systemPropertyVariables>
-                </configuration>
-            </plugin>
         </plugins>
     </build>
 
+    <!-- La sezione profiles non richiede modifiche -->
     <profiles>
         <profile>
             <id>native</id>
@@ -193,4 +199,5 @@
             </properties>
         </profile>
     </profiles>
+
 </project>

@@ -1,15 +1,15 @@
 package org.example.service.impl;
 
+import it.nextre.nextcart.dto.CategoriaDTO;
+import it.nextre.nextcart.service.ServizioCategoria;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
-import org.example.dto.CategoriaDTO;
 import org.example.entity.Categoria;
 import org.example.exception.EccezioneAccessoDati;
 import org.example.exception.EccezioneRisorsaNonTrovata;
 import org.example.repository.CategoriaRepository;
 import org.example.repository.ProdottoRepository;
-import org.example.service.ServizioCategoria;
 
 import java.util.List;
 import java.util.Optional;

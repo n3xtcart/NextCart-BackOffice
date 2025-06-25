@@ -23,8 +23,6 @@ import org.example.exception.mapper.ErrorMessage;
 import org.example.service.ServizioAutenticazione;
 import org.example.util.TokenUtils;
 
-import java.util.Map;
-
 @Path("/api/v1/auth")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)

@@ -31,20 +31,18 @@ public class ServizioAutenticazioneImpl implements ServizioAutenticazione {
         return new UtenteDTO(utente.getId(), utente.getEmail(), utente.getRuolo());
     }
 
+    @Override
     @Transactional
-    public UtenteDTO registraAdminDiDefault(String email, String passwordInChiaro, String ruolo) {
-        if (utenteRepository.findByEmail(email).isPresent()) {
-            System.out.println("Utente " + ruolo + " con email " + email + " già esistente.");
-            return utenteRepository.findByEmail(email)
-                    .map(u -> new UtenteDTO(u.getId(), u.getEmail(), u.getRuolo()))
-                    .orElse(null);
+    public void inizializzaUtenteAdminSeAssente(String email, String passwordInChiaro, String ruolo) {
+        if (utenteRepository.findByEmail(email).isEmpty()) {
+            Utente admin = new Utente();
+            admin.setEmail(email);
+            admin.setHashPassword(CodificatorePassword.calcolaHashPassword(passwordInChiaro));
+            admin.setRuolo(ruolo);
+            utenteRepository.persist(admin);
+            System.out.println("Utente " + ruolo + " creato: " + email);
+        } else {
+            System.out.println("Utente " + ruolo + " con email " + email + " già esistente. Nessuna azione richiesta.");
         }
-        Utente admin = new Utente();
-        admin.setEmail(email);
-        admin.setHashPassword(CodificatorePassword.calcolaHashPassword(passwordInChiaro)); // INSICURO
-        admin.setRuolo(ruolo);
-        utenteRepository.persist(admin);
-        System.out.println("Utente " + ruolo + " creato: " + email);
-        return new UtenteDTO(admin.getId(), admin.getEmail(), admin.getRuolo());
     }
 }

@@ -1,5 +1,7 @@
 package org.example.resource;
 
+import it.nextre.nextcart.dto.CategoriaDTO;
+import it.nextre.nextcart.service.ServizioCategoria;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
@@ -15,11 +17,9 @@ import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.security.SecurityRequirement;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
-import org.example.dto.CategoriaDTO;
 import org.example.exception.EccezioneAccessoDati;
 import org.example.exception.EccezioneRisorsaNonTrovata;
 import org.example.exception.mapper.ErrorMessage;
-import org.example.service.ServizioCategoria;
 
 import java.net.URI;
 import java.util.List;

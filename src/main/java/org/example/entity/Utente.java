@@ -1,5 +1,5 @@
 package org.example.entity;
-
+// ... (codice completo come fornito in precedenza) ...
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -36,3 +36,4 @@ public class Utente {
     @Column(length = 50)
     private String ruolo;
 }
+// 172.30
